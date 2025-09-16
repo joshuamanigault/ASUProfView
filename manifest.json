@@ -1,0 +1,19 @@
+{
+    "manifest_version": 3, 
+    "name": "RMP ASU",
+    "version": "1.0.0",
+    "description": "Displaying RMP reviews for ASU class search",
+    "permissions": ["storage", "activeTab", "scripting"],
+    "host_permissions": [
+        "https://*.ratemyprofessors.com/*"
+    ],
+    "background": {
+        "service-worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": ["https://catalog.apps.asu.edu/*"],
+            "js": ["content.js"]
+        }
+    ]
+}
