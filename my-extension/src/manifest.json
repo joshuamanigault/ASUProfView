@@ -2,7 +2,7 @@
     "manifest_version": 3, 
     "name": "RMP ASU",
     "version": "1.0.0",
-    "description": "Displaying RMP reviews for ASU class search",
+    "description": "Displaying RMP reviews for ASU class search / Vite version",
     "permissions": ["storage", "activeTab", "scripting"],
     "host_permissions": [
         "https://*.ratemyprofessors.com/*"
