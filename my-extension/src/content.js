@@ -1,15 +1,21 @@
-console.log("Content script loaded");
+(async () => {
+    try {
+        const response = await chrome.runtime.sendMessage({professorName: "Soumya Indela"});
+        console.log(response);
+    } catch (error) {
+        console.error("Error sending message:", error);
+    }
+  })();
 
 function findProfessors() {
-    // Fix the typo: 'instrcutor' -> 'instructor'
     const instructorDivs = document.querySelectorAll('div.instructor.class-results-cell');
-    console.log(`Found ${instructorDivs.length} instructor divs`);
+    //console.log(`Found ${instructorDivs.length} instructor divs`);
     
     instructorDivs.forEach((div, index) => {
         const link = div.querySelector('a');
         if (link) {
             const name = link.innerText.trim();
-            console.log(`Professor ${index + 1}: ${name}`);
+            // console.log(`Professor ${index + 1}: ${name}`);
         }
     });
 }

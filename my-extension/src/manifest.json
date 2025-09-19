@@ -8,7 +8,7 @@
         "https://*.ratemyprofessors.com/*"
     ],
     "background": {
-        "service-worker": "background.js"
+        "service_worker": "background.js"
     },
     "content_scripts": [
         {
