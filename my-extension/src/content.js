@@ -11,7 +11,7 @@ function findProfessors() {
         if (!link) return;
         
         const name = link.innerText.trim();
-        if(professorCache.has(name)) {
+        if (professorCache.has(name)) {
             console.log(name, 'has cache');
             injectProfessorCard(name, professorCache.get(name));
         } else {
