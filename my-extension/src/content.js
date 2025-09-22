@@ -283,3 +283,4 @@ if (document.readyState === 'loading') {
 // Observe dynamically added elements
 const observer = new MutationObserver(findProfessors);
 observer.observe(document.body, { childList: true, subtree: true });
+x``
