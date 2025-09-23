@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "ASU ProfView",
     "version": "1.0.0",
-    "description": "See Rate My Professor reviews directly in your ASU class search. Get instant access to professor ratings and reviews while browsing courses.",
+    "description": "See professor ratings and reviews directly in ASU class search. Get instant access to Rate My Professor data while browsing courses.",
     "author": "n.joshuamanigault@gmail.com",
     "homepage_url": "https://github.com/joshuamanigault/ASUProfView",
     "permissions": [
