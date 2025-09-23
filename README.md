@@ -1,4 +1,4 @@
-# RMP ASU Chrome Extension
+# ASU ProfView
 
 **See Rate My Professor reviews directly in your ASU class search!**  
 
@@ -13,12 +13,24 @@ This Chrome extension enhances the Arizona State University class catalog by sho
 
 ---
 
-## 📥 How to Install
-1. **Download the extension files** from this repository (or clone if needed).  
-2. Open Chrome and go to: `chrome://extensions/`  
-3. Enable **Developer Mode** (toggle in the top-right corner).  
-4. Click **Load unpacked** and select the `dist/` folder from this project.  
-5. Visit the ASU Catalog and start browsing courses — professor reviews will appear automatically.
+## 📥 Installation
+
+### For Users (Chrome Web Store)
+Coming soon! The extension will be available on the Chrome Web Store.
+
+### For Developers/Contributors
+1. **Clone the repository** or **Download the extension files** from this repository.
+2. Install dependencies
+```
+npm install
+```  
+3. Build the extension
+```
+npm run build
+```
+4 Open chrome and go to: `chrome://extensions/` and enable **Developer Mode**.
+5. Click **Load unpacked** and select the `dist/` folder from this project.  
+6. Visit the ASU Catalog and start browsing courses — professor reviews will appear automatically.
 
 ---
 
