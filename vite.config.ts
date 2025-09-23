@@ -1,5 +1,5 @@
 import { defineConfig } from "vite";
-import { copyFileSync } from "fs";
+import { copyFileSync, cpSync } from "fs";
 import { resolve } from "path";
 
 export default defineConfig({
@@ -18,12 +18,11 @@ export default defineConfig({
   },
   plugins: [
     {
-      name: "copy-manifest",
+      name: "copy-assets",
       writeBundle() {
-        copyFileSync(
-          resolve("src/manifest.json"),
-          resolve("dist/manifest.json")
-        );
+          // Copy manifest.json and icons to dist
+          copyFileSync(resolve("src/manifest.json"), resolve("dist/manifest.json"));
+          cpSync(resolve("src/icons"), resolve("dist/icons"), { recursive: true });
       },
     },
   ],
