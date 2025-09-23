@@ -1,7 +1,7 @@
 {
-  "name": "my-extension",
+  "name": "ASU ProfView",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "npx tsx src/rmp-api.ts",
