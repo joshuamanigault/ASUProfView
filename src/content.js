@@ -1,11 +1,6 @@
 const processedProfessors = new Set();
 const professorCache = new Map();
 
-(async () => {
-    const response = await sendMessage({professorName: 'James Gordon'});
-    console.log('Test message response:', response.data);
-})
-
 // Find professors on the page
 function findProfessors() {
     const instructorDivs = document.querySelectorAll('div.instructor.class-results-cell');
