@@ -1,11 +1,18 @@
 {
-    "manifest_version": 3, 
-    "name": "RMP ASU",
+    "manifest_version": 3,
+    "name": "ASU ProfView",
     "version": "1.0.0",
-    "description": "Displaying RMP reviews for ASU class search / Vite version",
-    "permissions": ["storage", "activeTab", "scripting"],
+    "description": "See Rate My Professor reviews directly in your ASU class search. Get instant access to professor ratings and reviews while browsing courses.",
+    "author": "n.joshuamanigault@gmail.com",
+    "homepage_url": "https://github.com/joshuamanigault/ASUProfView",
+    "permissions": [
+        "storage",
+        "activeTab",
+        "scripting"
+    ],
     "host_permissions": [
-        "https://*.ratemyprofessors.com/*"
+        "https://*.ratemyprofessors.com/*",
+        "https://catalog.apps.asu.edu/*"
     ],
     "background": {
         "service_worker": "background.js"
@@ -13,7 +20,17 @@
     "content_scripts": [
         {
             "matches": ["https://catalog.apps.asu.edu/*"],
-            "js": ["content.js"]
+            "js": ["content.js"],
+            "run_at": "document_end"
         }
-    ]
+    ],
+    "icons": {
+        "16": "icons/icon16.png",
+        "32": "icons/icon32.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    },
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'"
+    }
 }
