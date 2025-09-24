@@ -5,10 +5,6 @@
     "description": "Rate My Professor Plugin for ASU Class Search. See professor ratings directly in ASU Class Search.",
     "author": "n.joshuamanigault@gmail.com",
     "homepage_url": "https://github.com/joshuamanigault/ASUProfView",
-    "permissions": [
-        "storage",
-        "scripting"
-    ],
     "host_permissions": [
         "https://*.ratemyprofessors.com/*",
         "https://catalog.apps.asu.edu/*"
