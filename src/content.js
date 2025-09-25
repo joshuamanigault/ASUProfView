@@ -92,6 +92,7 @@ function createProfessorCard(name, data) {
     const numRatings = data.numRatings || 0;
     const difficulty = data.avgDifficulty ? parseFloat(data.avgDifficulty) : null;
     const department = data.department || 'Unknown Department';
+    const professorId = data.legacyId || null;
     
     // Determine colors based on rating
     let ratingColor = '#6b7280';
@@ -128,7 +129,7 @@ function createProfessorCard(name, data) {
         <div class="rmp-card-content">
             <div class="rmp-header">
                 <div class="rmp-info">
-                    <div class="rmp-name">${name}</div>
+                    <div class="rmp-name"><a href="https://www.ratemyprofessors.com/professor/${professorId}" target="_blank" rel="noopener noreferrer">${name}</a></div>
                     <div class="rmp-department">${department}</div>
                 </div>
                 <div class="rmp-rating-badge" style="background-color: ${ratingBg}; color: ${ratingColor};">
