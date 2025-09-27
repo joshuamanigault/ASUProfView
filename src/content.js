@@ -1,3 +1,10 @@
+class LRUCache {
+    constructor(capacity = 50) {
+        this.capacity = capacity;
+        this.cache = new Map();
+    }
+}
+
 const processedProfessors = new Set();
 const professorCache = new Map();
 
@@ -52,6 +59,7 @@ async function processProfessorSequentially(names)  {
         try {
             const response = await sendMessage({professorName: name});
             console.log('✔️ Data for: ' + name, response); 
+            //console.log('Comments for: ' + name, response.comments);
 
             if (response.success) {
                 professorCache.set(name, response.data);
