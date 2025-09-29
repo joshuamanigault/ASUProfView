@@ -1,6 +1,5 @@
 import cache from './lruCache.js';
 
-const processedProfessors = new Set();
 const professorCache = new cache(100); // LRU Cache; size 100
 
 // Find professors on the page
@@ -55,13 +54,6 @@ async function processProfessorSequentially(names)  {
     }
 
     for (const name of names) {
-        if (processedProfessors.has(name)) {
-            console.debug('Skipping already processed professor: ' + name);
-            continue;
-        }
-        
-        processedProfessors.add(name);
-
         try {
             const response = await sendMessage({professorName: name});
             console.debug('✔️ Data for: ' + name); 
@@ -69,12 +61,12 @@ async function processProfessorSequentially(names)  {
             if (response?.success) {
                 try {
                     professorCache.put(name, response.data);
-                    console.debug(`Cache updated for ${name}. Size: ${professorCache.cache.size}/${professorCache.capacity}`);
+                    console.debug(`Cache updated for ${name}. Size: ${professorCache.getSize()}/${professorCache.capacity}`);
                     injectProfessorCard(name, response.data);
                 } catch (cacheError) {
                     console.error('Cache error for ' + name + ':', cacheError);
                     // If cache fails, try to recover by clearing it
-                    if (professorCache.cache.size >= professorCache.capacity) {
+                    if (professorCache.getSize() >= professorCache.capacity) {
                         console.warn('Cache full, clearing...');
                         professorCache.clear();
                         professorCache.put(name, response.data);
@@ -87,7 +79,6 @@ async function processProfessorSequentially(names)  {
                 return;
             }
             console.error('❌ Error fetching data for: ' + name, error);
-            processedProfessors.delete(name); // Allow retry on next pass
         }
     }
 }

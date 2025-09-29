@@ -74,4 +74,8 @@ export default class LRUCache {
         this.head.next = this.tail;
         this.tail.prev = this.head;
     }
+
+    getSize() {
+        return this.cache.size;
+    }
 }
