@@ -11,7 +11,8 @@ chrome.runtime.onMessage.addListener(
         try {
           const rmp_instance = new RateMyProfessor("Arizona State University", request.professorName);
           const professor_info = await rmp_instance.get_professor_info();
-          sendResponse({ success: true, data: professor_info });
+          //const professor_comments = await rmp_instance.get_comments_by_professor();
+          sendResponse({ success: true, data: professor_info});
         } catch (error) {
           console.error("Error fetching professor info:", error);
           sendResponse({ success: false, error: (error as Error).message });
