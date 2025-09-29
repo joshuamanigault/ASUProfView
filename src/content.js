@@ -158,7 +158,11 @@ function createProfessorCard(name, data) {
         <div class="rmp-card-content">
             <div class="rmp-header">
                 <div class="rmp-info">
-                    <div class="rmp-name"><a href="https://www.ratemyprofessors.com/professor/${professorId}" target="_blank" rel="noopener noreferrer">${name}</a></div>
+                    <div class="rmp-name">${
+                        professorId
+                            ? `<a href="https://www.ratemyprofessors.com/professor/${professorId}" target="_blank" rel="noopener noreferrer">${name}</a>`
+                            : `${name}`
+                    }</div>
                     <div class="rmp-department">${department}</div>
                 </div>
                 <div class="rmp-rating-badge" style="background-color: ${ratingBg}; color: ${ratingColor};">
