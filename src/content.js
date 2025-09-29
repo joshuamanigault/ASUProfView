@@ -65,12 +65,6 @@ async function processProfessorSequentially(names)  {
                     injectProfessorCard(name, response.data);
                 } catch (cacheError) {
                     console.error('Cache error for ' + name + ':', cacheError);
-                    // If cache fails, try to recover by clearing it
-                    if (professorCache.getSize() >= professorCache.capacity) {
-                        console.warn('Cache full, clearing...');
-                        professorCache.clear();
-                        professorCache.put(name, response.data);
-                    }
                 }
             }
         } catch (error) {
