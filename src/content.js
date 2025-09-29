@@ -14,7 +14,7 @@ function findProfessors() {
         const name = link.innerText.trim();
         try {
             const cachedData = professorCache.get(name);
-            if (cachedData !== -1) {
+            if (cachedData !== null) {
                 console.debug('Cache hit:', name);
                 injectProfessorCard(name, cachedData);
             } else {
