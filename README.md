@@ -16,7 +16,7 @@ This Chrome extension enhances the Arizona State University class catalog by sho
 ## Installation
 
 ### For Users (Chrome Web Store)
-Link to Extension: [Chrome Web Store](https://chromewebstore.google.com/detail/asu-profview/kniajfafepienoohdheheofabfclpgnl)
+Link to Extension: [Chrome Web Store](https://chromewebstore.google.com/detail/asu-profview/kniajfafepienoohdheheofabfclpgnl?authuser=2&hl=en)
 
 ### For Developers/Contributors
 1. **Clone the repository** or **Download the extension files** from this repository.
@@ -37,6 +37,8 @@ npm run build
 - Works on [ASU Catalog](https://catalog.apps.asu.edu/) pages only.  
 - Make sure you refresh the catalog page after installing the extension.  
 - Data comes from Rate My Professor.
+
+---
 
 
 Enjoy faster course planning with integrated professor reviews!
