@@ -36,10 +36,10 @@ export default class LRUCache {
         nextNode.prev = prevNode;
     }
 
-    // Get the value of the key if the key exists in the cache, otherwise return -1
+    // Get the value of the key if the key exists in the cache, otherwise return null
     get(key) {
         if (!this.cache.has(key)) {
-            return -1;
+            return null;
         }
 
         const node = this.cache.get(key);
