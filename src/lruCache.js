@@ -57,6 +57,7 @@ export default class LRUCache {
         }
 
         if (this.cache.size >= this.capacity) {
+            console.debug('Cache full, evicting least recently used item:', this.tail.prev.key);
             const lruNode = this.tail.prev;
             this.remove(lruNode);
             this.cache.delete(lruNode.key);
@@ -65,5 +66,12 @@ export default class LRUCache {
         const newNode = new Node(key, value);
         this.add(newNode);
         this.cache.set(key, newNode);
+    }
+
+    // Clear the entire cache
+    clear() {
+        this.cache = new Map();
+        this.head.next = this.tail;
+        this.tail.prev = this.head;
     }
 }

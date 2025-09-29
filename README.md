@@ -29,8 +29,7 @@ npm install
 npm run build
 ```
 4 Open chrome and go to: `chrome://extensions/` and enable **Developer Mode**.
-5. Click **Load unpacked** and select the `dist/` folder from this project.  
-6. Visit the ASU Catalog and start browsing courses — professor reviews will appear automatically.
+5. Click **Load unpacked** and select the `dist/` folder from this project.
 
 ---
 

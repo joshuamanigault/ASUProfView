@@ -1,12 +1,7 @@
-class LRUCache {
-    constructor(capacity = 50) {
-        this.capacity = capacity;
-        this.cache = new Map();
-    }
-}
+import cache from './lruCache.js';
 
 const processedProfessors = new Set();
-const professorCache = new Map();
+const professorCache = new cache(100); // LRU Cache; size 100
 
 // Find professors on the page
 function findProfessors() {
@@ -18,10 +13,17 @@ function findProfessors() {
         if (!link) return;
         
         const name = link.innerText.trim();
-        if (professorCache.has(name)) {
-            console.log(name, 'has cache');
-            injectProfessorCard(name, professorCache.get(name));
-        } else {
+        try {
+            const cachedData = professorCache.get(name);
+            if (cachedData !== -1) {
+                console.debug('Cache hit:', name);
+                injectProfessorCard(name, cachedData);
+            } else {
+                console.debug('Cache miss:', name);
+                names.push(name);
+            }
+        } catch (error) {
+            console.error('Cache error for ' + name + ':', error);
             names.push(name);
         }
     });
@@ -47,26 +49,45 @@ function sendMessage(message) {
 
 // Process professors sequentially
 async function processProfessorSequentially(names)  {
+    if (!chrome.runtime?.id) {
+        console.error('Extension context invalidated - please refresh the page');
+        return;
+    }
+
     for (const name of names) {
         if (processedProfessors.has(name)) {
-            console.log('Skipping already processed professor: ' + name);
+            console.debug('Skipping already processed professor: ' + name);
             continue;
         }
         
         processedProfessors.add(name);
-        // console.log('Processing professor: ' + name);
 
         try {
             const response = await sendMessage({professorName: name});
-            console.log('✔️ Data for: ' + name, response); 
-            //console.log('Comments for: ' + name, response.comments);
+            console.debug('✔️ Data for: ' + name); 
 
-            if (response.success) {
-                professorCache.set(name, response.data);
-                injectProfessorCard(name, response.data);
+            if (response?.success) {
+                try {
+                    professorCache.put(name, response.data);
+                    console.debug(`Cache updated for ${name}. Size: ${professorCache.cache.size}/${professorCache.capacity}`);
+                    injectProfessorCard(name, response.data);
+                } catch (cacheError) {
+                    console.error('Cache error for ' + name + ':', cacheError);
+                    // If cache fails, try to recover by clearing it
+                    if (professorCache.cache.size >= professorCache.capacity) {
+                        console.warn('Cache full, clearing...');
+                        professorCache.clear();
+                        professorCache.put(name, response.data);
+                    }
+                }
             }
         } catch (error) {
+            if (error.message?.includes('Extension context invalidated')) {
+                console.error('Extension context invalidated - please refresh the page');
+                return;
+            }
             console.error('❌ Error fetching data for: ' + name, error);
+            processedProfessors.delete(name); // Allow retry on next pass
         }
     }
 }
@@ -289,6 +310,19 @@ if (document.readyState === 'loading') {
     findProfessors();
 }
 
-// Observe dynamically added elements
-const observer = new MutationObserver(findProfessors);
+// Debounce function to prevent too frequent updates
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Observe dynamically added elements with debouncing
+const observer = new MutationObserver(debounce(findProfessors, 250));
 observer.observe(document.body, { childList: true, subtree: true });
