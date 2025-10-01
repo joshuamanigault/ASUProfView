@@ -1,8 +1,3 @@
-import cache from './lruCache.js';
-
-const professorCache = new cache(100); // LRU Cache; size 100
-
-// Find professors on the page
 function findProfessors() {
     const instructorDivs = document.querySelectorAll('div.instructor.class-results-cell');
     const names = [];
@@ -12,17 +7,8 @@ function findProfessors() {
         if (!link) return;
         
         const name = link.innerText.trim();
-        try {
-            const cachedData = professorCache.get(name);
-            if (cachedData !== null) {
-                console.debug('Cache hit:', name);
-                injectProfessorCard(name, cachedData);
-            } else {
-                console.debug('Cache miss:', name);
-                names.push(name);
-            }
-        } catch (error) {
-            console.error('Cache error for ' + name + ':', error);
+
+        if (!div.querySelector('.rmp-card') && !names.includes(name)) {
             names.push(name);
         }
     });
@@ -59,13 +45,7 @@ async function processProfessorSequentially(names)  {
             console.debug('✔️ Data for: ' + name); 
 
             if (response?.success) {
-                try {
-                    professorCache.put(name, response.data);
-                    console.debug(`Cache updated for ${name}. Size: ${professorCache.getSize()}/${professorCache.capacity}`);
-                    injectProfessorCard(name, response.data);
-                } catch (cacheError) {
-                    console.error('Cache error for ' + name + ':', cacheError);
-                }
+                injectProfessorCard(name, response.data);
             }
         } catch (error) {
             if (error.message?.includes('Extension context invalidated')) {
