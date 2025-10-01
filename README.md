@@ -1,4 +1,4 @@
-# ASU ProfView
+# ASU ProfessorView
 
 **See Rate My Professor reviews directly in your ASU class search!**  
 
@@ -16,7 +16,7 @@ This Chrome extension enhances the Arizona State University class catalog by sho
 ## Installation
 
 ### For Users (Chrome Web Store)
-Link to Extension: [Chrome Web Store](https://chromewebstore.google.com/detail/asu-profview/kniajfafepienoohdheheofabfclpgnl?authuser=2&hl=en)
+Link to Extension: [Chrome Web Store](https://chromewebstore.google.com/detail/asu-profview/kniajfafepienoohdheheofabfclpgnl)
 
 ### For Developers/Contributors
 1. **Clone the repository** or **Download the extension files** from this repository.
