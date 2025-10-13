@@ -5,14 +5,17 @@ function findProfessors() {
     instructorDivs.forEach((div) => {
         const link = div.querySelector('a');
         if (!link) return;
-        
-        const name = link.innerText.trim();
 
-        if (!div.querySelector('.rmp-card') && !names.includes(name)) {
-            names.push(name);
+        // Remove hyphens and extra spaces from the name
+        const rawName = link.innerText.trim();
+        const normalizedName = rawName.replace(/-/g, ' ').replace(/\s+/g, ' ').trim();
+
+        if (!div.querySelector('.rmp-card') && !names.includes(normalizedName)) {
+            names.push(normalizedName);
         }
     });
 
+    // console.debug('Names length:', names.length);
     if (names.length > 0) {
         processProfessorSequentially(names);
     }
@@ -42,7 +45,7 @@ async function processProfessorSequentially(names)  {
     for (const name of names) {
         try {
             const response = await sendMessage({professorName: name});
-            console.debug('✔️ Data for: ' + name); 
+            console.debug('Data for: ' + name, response); 
 
             if (response?.success) {
                 injectProfessorCard(name, response.data);
@@ -52,7 +55,7 @@ async function processProfessorSequentially(names)  {
                 console.error('Extension context invalidated - please refresh the page');
                 return;
             }
-            console.error('❌ Error fetching data for: ' + name, error);
+            console.error('Error fetching data for: ' + name, error);
         }
     }
 }
@@ -64,7 +67,13 @@ function injectProfessorCard(name, data) {
     
     instructorDivs.forEach((div) => {
         const link = div.querySelector('a');
-        if (!link || link.innerText.trim() !== name) return;
+        if (!link) return;
+        
+        // Normalize both names for comparison
+        const rawLinkName = link.innerText.trim();
+        const normalizedLinkName = rawLinkName.replace(/-/g, ' ').replace(/\s+/g, ' ').trim();
+        
+        if (normalizedLinkName !== name) return;
         
         // Check if card already exists
         if (div.querySelector('.rmp-card')) return;

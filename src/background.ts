@@ -1,12 +1,28 @@
 import { RateMyProfessor } from "rate-my-professor-api-ts"
 
-const DELAY = 100;
+
 let lastRequestTime = 0;
 let requestQueue: Promise<any> = Promise.resolve();
 
+const DELAY = 100;
+const CACHE_SIZE_LIMIT = 100;
 const professorCache = new Map<string, any>();
 const professorTimestamps = new Map<string, number>();
-const CACHE_DURATION = 10 * 60 * 1000; // 10 mins * 60 secs * 1000 ms
+const CACHE_DURATION = 5 * 60 * 1000; // 5 mins * 60 secs * 1000 ms
+
+
+function maintainCacheSize() {
+  if (professorCache.size >= CACHE_SIZE_LIMIT) {
+        const entries = Array.from(professorTimestamps.entries())
+          .sort(([,a], [,b]) => a - b)
+          .slice(0, 50);
+        
+        entries.forEach(([key]) => {
+          professorCache.delete(key);
+          professorTimestamps.delete(key);
+        })
+      }
+}
 
 
 async function getRateMyProfessorData(professorName: string) {
@@ -38,8 +54,12 @@ async function getRateMyProfessorData(professorName: string) {
 
     try {
       // Fetch data from API
+      console.debug('Fetching from API for:', professorName);
       const rmp_instance = new RateMyProfessor("Arizona State University", professorName);
       const result = await rmp_instance.get_professor_info();
+
+      // Maintain the cache size
+      maintainCacheSize();
       
       // Cache the result
       professorCache.set(cacheKey, result);
