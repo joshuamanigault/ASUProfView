@@ -10,7 +10,6 @@ const professorCache = new Map<string, any>();
 const professorTimestamps = new Map<string, number>();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 mins * 60 secs * 1000 ms
 
-
 function maintainCacheSize() {
   if (professorCache.size >= CACHE_SIZE_LIMIT) {
         const entries = Array.from(professorTimestamps.entries())
@@ -57,6 +56,9 @@ async function getRateMyProfessorData(professorName: string) {
       console.debug('Fetching from API for:', professorName);
       const rmp_instance = new RateMyProfessor("Arizona State University", professorName);
       const result = await rmp_instance.get_professor_info();
+
+      // Maintain the cache size
+      maintainCacheSize();
 
       // Maintain the cache size
       maintainCacheSize();

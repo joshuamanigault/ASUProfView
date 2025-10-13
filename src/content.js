@@ -18,7 +18,7 @@ function findProfessors() {
     // console.debug('Names length:', names.length);
     if (names.length > 0) {
         processProfessorSequentially(names);
-    }
+    } 
 }
 
 // Send message to background script
