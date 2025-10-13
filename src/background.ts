@@ -60,8 +60,7 @@ async function getRateMyProfessorData(professorName: string) {
       // Maintain the cache size
       maintainCacheSize();
 
-      // Maintain the cache size
-      maintainCacheSize();
+      
       
       // Cache the result
       professorCache.set(cacheKey, result);
