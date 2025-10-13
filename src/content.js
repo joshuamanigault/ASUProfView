@@ -1,8 +1,3 @@
-import cache from './lruCache.js';
-
-const professorCache = new cache(100); // LRU Cache; size 100
-
-// Find professors on the page
 function findProfessors() {
     const instructorDivs = document.querySelectorAll('div.instructor.class-results-cell');
     const names = [];
@@ -10,26 +5,20 @@ function findProfessors() {
     instructorDivs.forEach((div) => {
         const link = div.querySelector('a');
         if (!link) return;
-        
-        const name = link.innerText.trim();
-        try {
-            const cachedData = professorCache.get(name);
-            if (cachedData !== null) {
-                console.debug('Cache hit:', name);
-                injectProfessorCard(name, cachedData);
-            } else {
-                console.debug('Cache miss:', name);
-                names.push(name);
-            }
-        } catch (error) {
-            console.error('Cache error for ' + name + ':', error);
-            names.push(name);
+
+        // Remove hyphens and extra spaces from the name
+        const rawName = link.innerText.trim();
+        const normalizedName = rawName.replace(/-/g, ' ').replace(/\s+/g, ' ').trim();
+
+        if (!div.querySelector('.rmp-card') && !names.includes(normalizedName)) {
+            names.push(normalizedName);
         }
     });
 
+    // console.debug('Names length:', names.length);
     if (names.length > 0) {
         processProfessorSequentially(names);
-    }
+    } 
 }
 
 // Send message to background script
@@ -56,23 +45,17 @@ async function processProfessorSequentially(names)  {
     for (const name of names) {
         try {
             const response = await sendMessage({professorName: name});
-            console.debug('✔️ Data for: ' + name); 
+            console.debug('Data for: ' + name, response); 
 
             if (response?.success) {
-                try {
-                    professorCache.put(name, response.data);
-                    console.debug(`Cache updated for ${name}. Size: ${professorCache.getSize()}/${professorCache.capacity}`);
-                    injectProfessorCard(name, response.data);
-                } catch (cacheError) {
-                    console.error('Cache error for ' + name + ':', cacheError);
-                }
+                injectProfessorCard(name, response.data);
             }
         } catch (error) {
             if (error.message?.includes('Extension context invalidated')) {
                 console.error('Extension context invalidated - please refresh the page');
                 return;
             }
-            console.error('❌ Error fetching data for: ' + name, error);
+            console.error('Error fetching data for: ' + name, error);
         }
     }
 }
@@ -84,7 +67,13 @@ function injectProfessorCard(name, data) {
     
     instructorDivs.forEach((div) => {
         const link = div.querySelector('a');
-        if (!link || link.innerText.trim() !== name) return;
+        if (!link) return;
+        
+        // Normalize both names for comparison
+        const rawLinkName = link.innerText.trim();
+        const normalizedLinkName = rawLinkName.replace(/-/g, ' ').replace(/\s+/g, ' ').trim();
+        
+        if (normalizedLinkName !== name) return;
         
         // Check if card already exists
         if (div.querySelector('.rmp-card')) return;
