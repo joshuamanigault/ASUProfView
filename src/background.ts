@@ -151,14 +151,10 @@ async function getRateMyProfessorData(professorName: string) {
 
     try {
       // Fetch data from API
-      console.debug('Fetching from API for:', professorName);
-      const rmp_instance = new RateMyProfessor("Arizona State University", professorName);
-      const result = await rmp_instance.get_professor_info();
+      const result = await searchAsuCampuses(professorName);
 
       // Maintain the cache size
       maintainCacheSize();
-
-      
       
       // Cache the result
       professorCache.set(cacheKey, result);
@@ -168,22 +164,51 @@ async function getRateMyProfessorData(professorName: string) {
       return result;
     } catch (error) {
       lastRequestTime = Date.now();
-      throw error;
+      
+      // Log the error but don't crash the extension
+      console.warn(`IMPORTANT: Could not find professor "${professorName}":`, error instanceof Error ? error.message : error);
+      
+      // Cache the failure to avoid repeated failed requests
+      const failureResult = {
+        error: true,
+        message: `Professor "${professorName}" not found`,
+        searchedName: professorName,
+        timestamp: Date.now()
+      };
+      
+      professorCache.set(cacheKey, failureResult);
+      professorTimestamps.set(cacheKey, Date.now());
+      
+      // Return the failure result instead of throwing
+      return failureResult;
     }
   });
 }
 
 chrome.runtime.onMessage.addListener(
   function (request, _sender, sendResponse) {
-
     if (request.professorName) {
       (async () => {
         try {
           const professor_info = await getRateMyProfessorData(request.professorName);
-          sendResponse({ success: true, data: professor_info });
+          
+          // Check if it's a cached failure
+          if (professor_info.error) {
+            sendResponse({ 
+              success: false, 
+              error: professor_info.message,
+              cached: true 
+            });
+          } else {
+            sendResponse({ success: true, data: professor_info });
+          }
         } catch (error) {
-          console.error("Error fetching professor info:", error);
-          sendResponse({ success: false, error: (error as Error).message });
+          console.error("Unexpected error fetching professor info:", error);
+          sendResponse({ 
+            success: false, 
+            error: "An unexpected error occurred",
+            details: (error as Error).message 
+          });
         }
       })();
 
