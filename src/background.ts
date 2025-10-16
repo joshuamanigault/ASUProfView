@@ -1,6 +1,5 @@
 import { RateMyProfessor } from "rate-my-professor-api-ts"
 
-
 let lastRequestTime = 0;
 let requestQueue: Promise<any> = Promise.resolve();
 
@@ -9,6 +8,105 @@ const CACHE_SIZE_LIMIT = 100;
 const professorCache = new Map<string, any>();
 const professorTimestamps = new Map<string, number>();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 mins * 60 secs * 1000 ms
+
+const ASU_CAMPUSES = [
+  "Arizona State University",
+  "Arizona State University - Polytechnic Campus",
+  "Arizona State University - West Campus"
+]
+
+const ASU_PROFESSOR_NAME_REPLACEMENTS: { [key: string]: string} = {
+  "Steven Baer": "Steve Baer",
+  "Shyla Gonzalez Dogan": "Shyla Dogan",
+  "Carla van de Sande": "Carla Van De Sande",
+  "Christopher Felix Gozo": "Christopher Gozo",
+  "Josh Klein": "Joshua Klein"
+}
+
+function applyNameReplacements(professorName: string): string {
+  // Direct replacement
+  if (ASU_PROFESSOR_NAME_REPLACEMENTS[professorName]) {
+    console.debug(`Name replacement: "${professorName}" → "${ASU_PROFESSOR_NAME_REPLACEMENTS[professorName]}"`);
+    return ASU_PROFESSOR_NAME_REPLACEMENTS[professorName];
+  }
+  
+  // Partial replacement (for first names)
+  let modifiedName = professorName;
+  for (const [original, replacement] of Object.entries(ASU_PROFESSOR_NAME_REPLACEMENTS)) {
+    if (professorName.includes(original)) {
+      modifiedName = professorName.replace(original, replacement);
+      console.debug(`Partial name replacement: "${professorName}" → "${modifiedName}"`);
+      break;
+    }
+  }
+  
+  return modifiedName;
+}
+
+
+async function searchAsuCampuses(professorName: string) {
+  const errors: string[] = [];
+  
+  // Try original name first
+  const namesToTry = [professorName];
+  
+  // Add replacement name if it exists
+  const replacementName = applyNameReplacements(professorName);
+  if (replacementName !== professorName) {
+    namesToTry.push(replacementName);
+  }
+  
+  // Try each name variation across all campuses
+  for (const nameToSearch of namesToTry) {
+    console.debug(`Trying name variation: "${nameToSearch}"`);
+    
+    for (const campus of ASU_CAMPUSES) {
+      try {
+        console.debug(`Searching ${campus} for: ${nameToSearch}`);
+        const rmp_instance = new RateMyProfessor(campus, nameToSearch);
+        const result = await rmp_instance.get_professor_info();
+        
+        if (validateProfessor(professorName, result, nameToSearch)) {
+          console.debug(`Found match at ${campus}: ${result.firstName} ${result.lastName}`);
+          return result;
+        } else {
+          console.debug(`Name mismatch at ${campus}: expected "${nameToSearch}", got "${result.firstName} ${result.lastName}"`);
+          continue;
+        }
+      } catch (error) {
+        const errorMsg = `${campus} (${nameToSearch}): ${error instanceof Error ? error.message : 'Unknown error'}`;
+        errors.push(errorMsg);
+        console.debug(`Error message: ${errorMsg}`);
+        continue; // Try next campus instead of throwing
+      }
+    }
+  }
+  
+  // If we get here, no campus had a valid match for any name variation
+  throw new Error(`Professor "${professorName}" not found at any ASU campus with any name variation. Tried: ${errors.join(', ')}`);
+}
+
+function validateProfessor(originalName: string, professorData: any, searchedName?: string): boolean {
+  if (!professorData || !professorData.firstName || !professorData.lastName) {
+    return false;
+  }
+
+  // Normalize both names consistently - remove extra spaces and trim
+  const fetchedFullName = `${professorData.firstName} ${professorData.lastName}`
+    .trim()
+    .replace(/\s+/g, ' '); // Replace multiple spaces with single space
+  
+  const nameToValidate = (searchedName || originalName)
+    .trim()
+    .replace(/\s+/g, ' '); // Replace multiple spaces with single space
+
+
+  if (nameToValidate !== fetchedFullName) {
+    return false;
+  } else {
+    return true;
+  }
+}
 
 function maintainCacheSize() {
   if (professorCache.size >= CACHE_SIZE_LIMIT) {
