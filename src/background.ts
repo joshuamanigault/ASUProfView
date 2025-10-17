@@ -20,8 +20,21 @@ const ASU_PROFESSOR_NAME_REPLACEMENTS: { [key: string]: string} = {
   "Shyla Gonzalez Dogan": "Shyla Dogan",
   "Carla van de Sande": "Carla Van De Sande",
   "Christopher Felix Gozo": "Christopher Gozo",
-  "Josh Klein": "Joshua Klein"
+  "Josh Klein": "Joshua Klein",
+  "Fabio Suzart de Albuquerque": "Fabio Albuquerque"
 }
+
+async function testApiCall() {
+  try {
+  const rmp_instance = new RateMyProfessor("Arizona State University", "Yang Kuang");
+  const result = await rmp_instance.get_professor_info();
+  console.debug(result);
+  } catch (error) {
+    console.error("Test API call error:", error);
+  }
+}
+
+testApiCall();
 
 function applyNameReplacements(professorName: string): string {
   // Direct replacement
