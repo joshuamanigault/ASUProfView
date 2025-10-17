@@ -21,7 +21,9 @@ const ASU_PROFESSOR_NAME_REPLACEMENTS: { [key: string]: string} = {
   "Carla van de Sande": "Carla Van De Sande",
   "Christopher Felix Gozo": "Christopher Gozo",
   "Josh Klein": "Joshua Klein",
-  "Fabio Suzart de Albuquerque": "Fabio Albuquerque"
+  "Fabio Suzart de Albuquerque": "Fabio Albuquerque",
+  "Lynn Robert Carter": "Lynn Carter",
+  "Zahra Sadri Moshkenani": "Zahra Sadri-Moshekenani"
 }
 
 async function testApiCall() {
