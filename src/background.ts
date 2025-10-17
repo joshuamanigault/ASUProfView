@@ -17,26 +17,25 @@ const ASU_CAMPUSES = [
 
 const ASU_PROFESSOR_NAME_REPLACEMENTS: { [key: string]: string} = {
   "Steven Baer": "Steve Baer",
-  "Shyla Gonzalez Dogan": "Shyla Dogan",
+  //"Shyla Gonzalez Dogan": "Shyla Dogan",
   "Carla van de Sande": "Carla Van De Sande",
-  "Christopher Felix Gozo": "Christopher Gozo",
+  //"Christopher Felix Gozo": "Christopher Gozo",
   "Josh Klein": "Joshua Klein",
-  "Fabio Suzart de Albuquerque": "Fabio Albuquerque",
-  "Lynn Robert Carter": "Lynn Carter",
+  //"Fabio Suzart de Albuquerque": "Fabio Albuquerque",
   "Zahra Sadri Moshkenani": "Zahra Sadri-Moshekenani"
 }
 
-async function testApiCall() {
-  try {
-  const rmp_instance = new RateMyProfessor("Arizona State University", "Yang Kuang");
-  const result = await rmp_instance.get_professor_info();
-  console.debug(result);
-  } catch (error) {
-    console.error("Test API call error:", error);
-  }
-}
+// async function testApiCall() {
+//   try {
+//   const rmp_instance = new RateMyProfessor("Arizona State University", "Yang Kuang");
+//   const result = await rmp_instance.get_professor_info();
+//   console.debug(result);
+//   } catch (error) {
+//     console.error("Test API call error:", error);
+//   }
+// }
 
-testApiCall();
+// testApiCall();
 
 function applyNameReplacements(professorName: string): string {
   // Direct replacement
@@ -64,12 +63,29 @@ async function searchAsuCampuses(professorName: string) {
   
   // Try original name first
   const namesToTry = [professorName];
+  const nameParts = professorName.split(' ');
   
   // Add replacement name if it exists
   const replacementName = applyNameReplacements(professorName);
   if (replacementName !== professorName) {
     namesToTry.push(replacementName);
   }
+
+  // Add variations: first name only, last name only
+  if (nameParts.length >= 2) {
+    const firstName = nameParts[0];
+    const lastName = nameParts[nameParts.length - 1];
+    const splicedName = `${firstName} ${lastName}`;
+    namesToTry.push(splicedName);
+  }
+
+  // Add hyphenated last name variation if professor has three name
+  if (nameParts.length === 3) {
+    const nameWithHyphen = `${nameParts[0]} ${nameParts[1]}-${nameParts[2]}`;
+    namesToTry.push(nameWithHyphen);
+  }
+
+
   
   // Try each name variation across all campuses
   for (const nameToSearch of namesToTry) {
