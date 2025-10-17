@@ -67,7 +67,7 @@ async function searchAsuCampuses(professorName: string) {
     namesToTry.push(splicedName);
   }
 
-  // Add hyphenated last name variation if professor has three name
+  // Add hyphenated last name variation if professor has three names
   if (nameParts.length === 3) {
     const nameWithHyphen = `${nameParts[0]} ${nameParts[1]}-${nameParts[2]}`;
     namesToTry.push(nameWithHyphen);
