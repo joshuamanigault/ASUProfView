@@ -1,6 +1,5 @@
 import { RateMyProfessor } from "rate-my-professor-api-ts"
 
-
 let lastRequestTime = 0;
 let requestQueue: Promise<any> = Promise.resolve();
 
@@ -9,6 +8,124 @@ const CACHE_SIZE_LIMIT = 100;
 const professorCache = new Map<string, any>();
 const professorTimestamps = new Map<string, number>();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 mins * 60 secs * 1000 ms
+
+const ASU_CAMPUSES = [
+  "Arizona State University",
+  "Arizona State University - Polytechnic Campus",
+  "Arizona State University - West Campus"
+]
+
+const ASU_PROFESSOR_NAME_REPLACEMENTS: { [key: string]: string} = {
+  "Steven Baer": "Steve Baer",
+  //"Shyla Gonzalez Dogan": "Shyla Dogan",
+  "Carla van de Sande": "Carla Van De Sande",
+  //"Christopher Felix Gozo": "Christopher Gozo",
+  "Josh Klein": "Joshua Klein",
+  //"Fabio Suzart de Albuquerque": "Fabio Albuquerque",
+  "Zahra Sadri Moshkenani": "Zahra Sadri-Moshekenani"
+}
+
+function applyNameReplacements(professorName: string): string {
+  // Direct replacement
+  if (ASU_PROFESSOR_NAME_REPLACEMENTS[professorName]) {
+    console.debug(`Name replacement: "${professorName}" → "${ASU_PROFESSOR_NAME_REPLACEMENTS[professorName]}"`);
+    return ASU_PROFESSOR_NAME_REPLACEMENTS[professorName];
+  }
+  
+  // Partial replacement (for first names)
+  let modifiedName = professorName;
+  for (const [original, replacement] of Object.entries(ASU_PROFESSOR_NAME_REPLACEMENTS)) {
+    if (professorName.includes(original)) {
+      modifiedName = professorName.replace(original, replacement);
+      console.debug(`Partial name replacement: "${professorName}" → "${modifiedName}"`);
+      break;
+    }
+  }
+  
+  return modifiedName;
+}
+
+
+async function searchAsuCampuses(professorName: string) {
+  const errors: string[] = [];
+  
+  // Try original name first
+  const namesToTry = [professorName];
+  const nameParts = professorName.split(' ');
+  
+  // Add replacement name if it exists
+  const replacementName = applyNameReplacements(professorName);
+  if (replacementName !== professorName) {
+    namesToTry.push(replacementName);
+  }
+
+  // Add variations: first name only, last name only
+  if (nameParts.length >= 2) {
+    const firstName = nameParts[0];
+    const lastName = nameParts[nameParts.length - 1];
+    const splicedName = `${firstName} ${lastName}`;
+    namesToTry.push(splicedName);
+  }
+
+  // Add hyphenated last name variation if professor has three names
+  if (nameParts.length === 3) {
+    const nameWithHyphen = `${nameParts[0]} ${nameParts[1]}-${nameParts[2]}`;
+    namesToTry.push(nameWithHyphen);
+  }
+
+
+  
+  // Try each name variation across all campuses
+  for (const nameToSearch of namesToTry) {
+    console.debug(`Trying name variation: "${nameToSearch}"`);
+    
+    for (const campus of ASU_CAMPUSES) {
+      try {
+        console.debug(`Searching ${campus} for: ${nameToSearch}`);
+        const rmp_instance = new RateMyProfessor(campus, nameToSearch);
+        const result = await rmp_instance.get_professor_info();
+        
+        if (validateProfessor(professorName, result, nameToSearch)) {
+          console.debug(`Found match at ${campus}: ${result.firstName} ${result.lastName}`);
+          return result;
+        } else {
+          console.debug(`Name mismatch at ${campus}: expected "${nameToSearch}", got "${result.firstName} ${result.lastName}"`);
+          continue;
+        }
+      } catch (error) {
+        const errorMsg = `${campus} (${nameToSearch}): ${error instanceof Error ? error.message : 'Unknown error'}`;
+        errors.push(errorMsg);
+        console.debug(`Error message: ${errorMsg}`);
+        continue; // Try next campus instead of throwing
+      }
+    }
+  }
+  
+  // If we get here, no campus had a valid match for any name variation
+  throw new Error(`Professor "${professorName}" not found at any ASU campus with any name variation. Tried: ${errors.join(', ')}`);
+}
+
+function validateProfessor(originalName: string, professorData: any, searchedName?: string): boolean {
+  if (!professorData || !professorData.firstName || !professorData.lastName) {
+    return false;
+  }
+
+  // Normalize both names consistently - remove extra spaces and trim
+  const fetchedFullName = `${professorData.firstName} ${professorData.lastName}`
+    .trim()
+    .replace(/\s+/g, ' '); // Replace multiple spaces with single space
+  
+  const nameToValidate = (searchedName || originalName)
+    .trim()
+    .replace(/\s+/g, ' '); // Replace multiple spaces with single space
+
+
+  if (nameToValidate !== fetchedFullName) {
+    return false;
+  } else {
+    return true;
+  }
+}
 
 function maintainCacheSize() {
   if (professorCache.size >= CACHE_SIZE_LIMIT) {
@@ -53,14 +170,10 @@ async function getRateMyProfessorData(professorName: string) {
 
     try {
       // Fetch data from API
-      console.debug('Fetching from API for:', professorName);
-      const rmp_instance = new RateMyProfessor("Arizona State University", professorName);
-      const result = await rmp_instance.get_professor_info();
+      const result = await searchAsuCampuses(professorName);
 
       // Maintain the cache size
       maintainCacheSize();
-
-      
       
       // Cache the result
       professorCache.set(cacheKey, result);
@@ -70,22 +183,51 @@ async function getRateMyProfessorData(professorName: string) {
       return result;
     } catch (error) {
       lastRequestTime = Date.now();
-      throw error;
+      
+      // Log the error but don't crash the extension
+      console.warn(`IMPORTANT: Could not find professor "${professorName}":`, error instanceof Error ? error.message : error);
+      
+      // Cache the failure to avoid repeated failed requests
+      const failureResult = {
+        error: true,
+        message: `Professor "${professorName}" not found`,
+        searchedName: professorName,
+        timestamp: Date.now()
+      };
+      
+      professorCache.set(cacheKey, failureResult);
+      professorTimestamps.set(cacheKey, Date.now());
+      
+      // Return the failure result instead of throwing
+      return failureResult;
     }
   });
 }
 
 chrome.runtime.onMessage.addListener(
   function (request, _sender, sendResponse) {
-
     if (request.professorName) {
       (async () => {
         try {
           const professor_info = await getRateMyProfessorData(request.professorName);
-          sendResponse({ success: true, data: professor_info });
+          
+          // Check if it's a cached failure
+          if (professor_info.error) {
+            sendResponse({ 
+              success: false, 
+              error: professor_info.message,
+              cached: true 
+            });
+          } else {
+            sendResponse({ success: true, data: professor_info });
+          }
         } catch (error) {
-          console.error("Error fetching professor info:", error);
-          sendResponse({ success: false, error: (error as Error).message });
+          console.error("Unexpected error fetching professor info:", error);
+          sendResponse({ 
+            success: false, 
+            error: "An unexpected error occurred",
+            details: (error as Error).message 
+          });
         }
       })();
 
