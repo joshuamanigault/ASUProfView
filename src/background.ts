@@ -25,18 +25,6 @@ const ASU_PROFESSOR_NAME_REPLACEMENTS: { [key: string]: string} = {
   "Zahra Sadri Moshkenani": "Zahra Sadri-Moshekenani"
 }
 
-// async function testApiCall() {
-//   try {
-//   const rmp_instance = new RateMyProfessor("Arizona State University", "Yang Kuang");
-//   const result = await rmp_instance.get_professor_info();
-//   console.debug(result);
-//   } catch (error) {
-//     console.error("Test API call error:", error);
-//   }
-// }
-
-// testApiCall();
-
 function applyNameReplacements(professorName: string): string {
   // Direct replacement
   if (ASU_PROFESSOR_NAME_REPLACEMENTS[professorName]) {
