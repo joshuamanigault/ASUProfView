@@ -6,8 +6,9 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        content: "src/content.js",
-        background: "src/background.ts",
+        content: "src/Content/content.js",
+        background: "src/Background/background.ts",
+        options: "src/Options/options.js",
       },
       output: {
         entryFileNames: "[name].js",
@@ -20,12 +21,10 @@ export default defineConfig({
     {
       name: "copy-assets",
       writeBundle() {
-          // Copy necessary static files to dist
-          copyFileSync(resolve("src/popup.html"), resolve("dist/popup.html"));
-          copyFileSync(resolve("src/manifest.json"), resolve("dist/manifest.json"));
-          copyFileSync(resolve("src/options.html"), resolve("dist/options.html"));
-          copyFileSync(resolve("src/options.js"), resolve("dist/options.js"));
-          cpSync(resolve("src/icons"), resolve("dist/icons"), { recursive: true });
+        copyFileSync("src/manifest.json", "dist/manifest.json");
+        cpSync("src/icons", "dist/icons", { recursive: true });
+        copyFileSync("src/Popup/popup.html", "dist/popup.html");
+        copyFileSync("src/Options/options.html", "dist/options.html");
       },
     },
   ],
