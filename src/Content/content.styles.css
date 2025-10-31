@@ -1,0 +1,158 @@
+.rmp-card {
+  margin: 8px 0;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  overflow: hidden;
+  max-width: 350px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  animation: rmp-fadeIn 0.3s ease-out;
+}
+
+@keyframes rmp-fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rmp-card-content {
+  padding: 16px;
+}
+
+.rmp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.rmp-info {
+  flex: 1;
+}
+
+.rmp-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 2px;
+}
+
+.rmp-department {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.rmp-rating-badge {
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  min-width: 40px;
+  text-align: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.rmp-stats {
+  display: flex;
+  gap: 16px;
+}
+
+.rmp-stat {
+  flex: 1;
+  text-align: center;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  border: 1px solid rgba(226, 232, 240, 0.5);
+}
+
+.rmp-stat-label {
+  display: block;
+  font-size: 10px;
+  color: #6b7280;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.rmp-stat-value {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 1px;
+}
+
+.rmp-stat-detail {
+  display: block;
+  font-size: 10px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+@media (max-width: 480px) {
+  .rmp-card {
+    max-width: 100%;
+  }
+
+  .rmp-stats {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+/* Not Found Card Styles */
+.rmp-not-found {
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.rmp-not-found-badge {
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  min-width: 40px;
+  text-align: center;
+  background-color: #f3f4f6;
+  color: #6b7280;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.rmp-not-found-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  border: 1px solid rgba(226, 232, 240, 0.5);
+}
+
+.rmp-not-found-icon {
+  font-size: 24px;
+  opacity: 0.6;
+}
+
+.rmp-not-found-text {
+  flex: 1;
+}
+
+.rmp-not-found-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4b5563;
+  margin-bottom: 2px;
+}
+
+.rmp-not-found-subtitle {
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.3;
+}
