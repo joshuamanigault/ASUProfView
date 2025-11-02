@@ -1,5 +1,5 @@
 import styles from './content.styles.css?inline'
-import { createProfessorCardTemplate, createNotFoundCardTemplate } from "./templates.js";
+import { createProfessorCardTemplate, createNotFoundCardTemplate, createCompactCardTemplate } from "./templates.js";
 
 function findProfessors() {
     const instructorDivs = document.querySelectorAll('div.instructor.class-results-cell');
@@ -81,8 +81,23 @@ function injectProfessorCard(name, data) {
         if (normalizedLinkName !== name) return;
         if (div.querySelector('.rmp-card')) return;
         
-        const card = createProfessorCard(name, data);
-        link.insertAdjacentElement('afterend', card);
+        chrome.storage.sync.get({ compact_cards: false }, (result) => {
+            // Re-check in callback to avoid race conditions with repeated observers/responses
+            if (div.querySelector('.rmp-card')) return;
+
+            const useCompact = Boolean(result.compact_cards);
+            let card;
+
+            if (useCompact) {
+                card = createCompactCard(name, data);
+            } else {
+                card = createProfessorCard(name, data);
+            }
+
+            if (card) {
+                link.insertAdjacentElement('afterend', card);
+            }
+        });
     });
 }
 
@@ -115,6 +130,13 @@ function createNotFoundCard(name, errorMessage) {
     const card = document.createElement('div');
     card.className = 'rmp-card rmp-not-found';
     card.innerHTML = createNotFoundCardTemplate(name, errorMessage);
+    return card;
+}
+
+function createCompactCard(name, data) {
+    const card = document.createElement('div');
+    card.className = 'rmp-card rmp-compact';
+    card.innerHTML = createCompactCardTemplate(name, data);
     return card;
 }
 
