@@ -67,7 +67,7 @@ export function createProfessorCardTemplate(name, data) {
     `;
 }
 
-export function createNotFoundCardTemplate(name, _errorMessage) {
+export function createNotFoundCardTemplate(name) {
     const normalizedName = (name || '').replace(/\s+/g, ' ').trim();
     const searchUrl = `https://www.ratemyprofessors.com/search/professors/15723?q=${encodeURIComponent(normalizedName)}`;
 
@@ -154,6 +154,20 @@ export function createCompactCardTemplate(name, data) {
                     ${difficulty ? difficulty.toFixed(1) : 'N/A'}
                 </div>
                 <span class="rmp-stat-label">Difficulty</span>
+            </div>
+        </div>
+    `;
+}
+
+export function createCompactNotFoundCardTemplate(name) {
+    const normalizedName = (name || '').replace(/\s+/g, ' ').trim();
+    const searchUrl = `https://www.ratemyprofessors.com/search/professors/15723?q=${encodeURIComponent(normalizedName)}`;
+
+    return `
+        <div class="rmp-compact-card-content">
+            <div class="rmp-compact-name">${name}</div>
+            <div class="rmp-compact-not-found-message">
+                <a href="${searchUrl}" target="_blank" rel="noopener noreferrer">No data found, search on RMP</a>
             </div>
         </div>
     `;

@@ -1,5 +1,5 @@
 import styles from './content.styles.css?inline'
-import { createProfessorCardTemplate, createNotFoundCardTemplate, createCompactCardTemplate } from "./templates.js";
+import { createProfessorCardTemplate, createNotFoundCardTemplate, createCompactCardTemplate, createCompactNotFoundCardTemplate } from "./templates.js";
 
 function findProfessors() {
     const instructorDivs = document.querySelectorAll('div.instructor.class-results-cell');
@@ -53,14 +53,14 @@ async function processProfessorSequentially(names)  {
             if (response?.success) {
                 injectProfessorCard(name, response.data);
             } else {
-                injectNotFoundCard(name, response?.error || 'Professor not found');
+                injectNotFoundCard(name);
             }
         } catch (error) {
             if (error.message?.includes('Extension context invalidated')) {
                 console.error('Extension context invalidated - please refresh the page');
                 return;
             } else {
-                injectNotFoundCard(name, 'Error fetching data');
+                injectNotFoundCard(name);
             }
             console.error('Error fetching data for: ' + name, error);
         }
@@ -101,7 +101,7 @@ function injectProfessorCard(name, data) {
     });
 }
 
-function injectNotFoundCard(name, errorMessage) {
+function injectNotFoundCard(name) {
     const instructorDivs = document.querySelectorAll('div.instructor.class-results-cell');
     
     instructorDivs.forEach((div) => {
@@ -114,8 +114,22 @@ function injectNotFoundCard(name, errorMessage) {
         if (normalizedLinkName !== name) return;
         if (div.querySelector('.rmp-card')) return;
 
-        const card = createNotFoundCard(name, errorMessage);
-        link.insertAdjacentElement('afterend', card);
+        chrome.storage.sync.get({ compact_cards: false }, (result) => {
+            if (div.querySelector('.rmp-card')) return;
+
+            const useCompact = Boolean(result.compact_cards);
+            let card;
+
+            if (useCompact) {
+                card = createCompactNotFoundCard(name);
+            } else {
+                card = createNotFoundCard(name);
+            }
+
+            if (card) {
+                link.insertAdjacentElement('afterend', card);
+            }
+        })
     });
 }
 
@@ -126,10 +140,10 @@ function createProfessorCard(name, data) {
     return card;
 }
 
-function createNotFoundCard(name, errorMessage) {
+function createNotFoundCard(name) {
     const card = document.createElement('div');
     card.className = 'rmp-card rmp-not-found';
-    card.innerHTML = createNotFoundCardTemplate(name, errorMessage);
+    card.innerHTML = createNotFoundCardTemplate(name);
     return card;
 }
 
@@ -137,6 +151,13 @@ function createCompactCard(name, data) {
     const card = document.createElement('div');
     card.className = 'rmp-card rmp-compact';
     card.innerHTML = createCompactCardTemplate(name, data);
+    return card;
+}
+
+function createCompactNotFoundCard(name) {
+    const card = document.createElement('div');
+    card.className = 'rmp-card rmp-compact';
+    card.innerHTML = createCompactNotFoundCardTemplate(name);
     return card;
 }
 
