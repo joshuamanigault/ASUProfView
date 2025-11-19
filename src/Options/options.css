@@ -129,7 +129,7 @@ a:hover {
 }
 
 .checked {
-    background-color: var(--bg-theme)
+    background-color: var(--bg-theme);
 }
 
 .checked .check {
