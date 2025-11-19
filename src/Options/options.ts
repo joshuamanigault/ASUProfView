@@ -1,18 +1,15 @@
 type Options = {
     compact_cards: boolean;
-    dark_mode: boolean;
 };
 
 // Defaults used when no user preference is stored yet
 const DEFAULTS: Options = {
-    compact_cards: false,
-    dark_mode: false,
+    compact_cards: false
 };
 
 // Map option keys to DOM element ids
 const KEY_TO_ID: Record<keyof Options, string> = {
     compact_cards: "compact-cards",
-    dark_mode: "dark-mode",
 };
 
 function setStoreLink() {
@@ -42,8 +39,7 @@ function loadOptions(): Promise<Options> {
         chrome.storage.sync.get(DEFAULTS, (result) => {
             // Result is a partial that always contains the provided defaults
             resolve({
-                compact_cards: Boolean(result.compact_cards),
-                dark_mode: Boolean(result.dark_mode),
+                compact_cards: Boolean(result.compact_cards)
             });
         });
     });
@@ -73,11 +69,9 @@ async function initOptionsPage() {
     // Load saved values and reflect in UI
     const opts = await loadOptions();
     setCheckboxDom(KEY_TO_ID.compact_cards, opts.compact_cards);
-    setCheckboxDom(KEY_TO_ID.dark_mode, opts.dark_mode);
 
     // Bind interactions
     bindCheckbox("compact_cards");
-    bindCheckbox("dark_mode");
 }
 
 if (document.readyState === "loading") {
