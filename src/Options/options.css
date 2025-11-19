@@ -133,5 +133,5 @@ a:hover {
 }
 
 .checked .check {
-    fill: var(--bg-default)
+    fill: var(--bg-default);
 }
