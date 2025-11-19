@@ -150,7 +150,7 @@ export function createCompactCardTemplate(name, data) {
                 <span class="rmp-stat-label">Rating</span>
             </div>
             <div class="rmp-compact-stat">
-                <div class="rmp-rating-badge" style="background-color:  ${difficultyBg}; color: ${difficultyColor};">
+                <div class="rmp-rating-badge" style="background-color: ${difficultyBg}; color: ${difficultyColor};">
                     ${difficulty ? difficulty.toFixed(1) : 'N/A'}
                 </div>
                 <span class="rmp-stat-label">Difficulty</span>
