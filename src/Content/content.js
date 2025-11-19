@@ -183,7 +183,7 @@ function debounce(func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
     };
-}        
+}
 
 // Run after page load
 window.addEventListener('load', findProfessors);
