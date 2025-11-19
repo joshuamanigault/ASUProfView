@@ -129,7 +129,7 @@ function injectNotFoundCard(name) {
             if (card) {
                 link.insertAdjacentElement('afterend', card);
             }
-        })
+        });
     });
 }
 
