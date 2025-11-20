@@ -1,34 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>ASU ProfessorView Settings</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap');
+  <head>
+    <meta charset="UTF-8" />
+    <title></title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
 
-        body {
-            font-family: Hanken Grotesk, sans-serif;
-            padding: 20px;
-        }
-        label {
-            display: block;
-            margin-top: 12px;
-        }
-    </style>
-</head>
-<body>
-    <h2>ProfessorView Settings</h2>
+  <body>
+    <div id="app-container">
+      <div id="header">
+        <a href="/" class="store-link">
+          <img src="icons/icon128.png" id="logo" />
+        </a>
+        <div>
+          <h5><a href="/" class="store-link">ASU ProfessorView</a></h5>
+          <h1>Settings</h1>
+        </div>
+      </div>
+      <div id="footer" class="label">Reload Class Search to see Changes</div>
 
-    <label>
-        <input type="checkbox" id="compactCards">
-        Enable Compact Cards
-    </label>
+      <div id="content">
+        <div id="boolean-options">
+          <div class="label">
+            <div class="checkbox" id="compact-cards">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                class="check"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"
+                />
+              </svg>
+            </div>
+            Enable Compact Cards
+          </div>
 
-    <label>
-        <input type="checkbox" id="darkMode">
-        Enable Dark Mode
-    </label>
+        </div>
+      </div>
+    </div>
 
     <script src="options.js"></script>
-</body>
+  </body>
 </html>

@@ -8,7 +8,7 @@ export default defineConfig({
       input: {
         content: "src/Content/content.js",
         background: "src/Background/background.ts",
-        options: "src/Options/options.js",
+        options: "src/Options/options.ts",
       },
       output: {
         entryFileNames: "[name].js",
@@ -25,6 +25,9 @@ export default defineConfig({
         cpSync("src/icons", "dist/icons", { recursive: true });
         copyFileSync("src/Popup/popup.html", "dist/popup.html");
         copyFileSync("src/Options/options.html", "dist/options.html");
+        copyFileSync("src/Options/options.css", "dist/options.css");
+        copyFileSync("src/Content/content.styles.css", "dist/content.styles.css");
+        copyFileSync("src/Content/templates.js", "dist/templates.js");
       },
     },
   ],
