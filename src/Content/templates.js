@@ -1,10 +1,4 @@
-export function createProfessorCardTemplate(name, data) {
-    const rating = data.avgRating ? parseFloat(data.avgRating) : null;
-    const numRatings = data.numRatings || 0;
-    const difficulty = data.avgDifficulty ? parseFloat(data.avgDifficulty) : null;
-    const department = data.department || 'Unknown Department';
-    const professorId = data.legacyId || null;
-    
+function getRatingColors(rating) {
     let ratingColor = '#6b7280';
     let ratingBg = '#f3f4f6';
     if (rating) {
@@ -22,17 +16,46 @@ export function createProfessorCardTemplate(name, data) {
             ratingBg = '#fecaca';
         }
     }
-    
+
+    return { ratingColor, ratingBg };
+}
+
+function getDifficultyColors(difficulty) {
     let difficultyColor = '#6b7280';
+    let difficultyBg = '#f3f4f6';
     if (difficulty) {
         if (difficulty >= 4.0) {
             difficultyColor = '#ef4444';
+            difficultyBg = '#fecaca';
         } else if (difficulty >= 3.0) {
+            difficultyColor = '#f97316';
+            difficultyBg = '#fed7aa';
+        } else if (difficulty >= 2.0) {
             difficultyColor = '#f59e0b';
+            difficultyBg = '#fef3c7';
         } else {
             difficultyColor = '#10b981';
+            difficultyBg = '#d1fae5';
         }
     }
+
+    return { difficultyColor, difficultyBg }
+}
+
+
+export function createProfessorCardTemplate(name, data) {
+    const rating = data.avgRating ? parseFloat(data.avgRating) : null;
+    const numRatings = data.numRatings || 0;
+    const difficulty = data.avgDifficulty ? parseFloat(data.avgDifficulty) : null;
+    const department = data.department || 'Unknown Department';
+    const professorId = data.legacyId || null;
+    
+    const cardRatingColors = getRatingColors(rating);
+    let ratingColor = cardRatingColors.ratingColor;
+    let ratingBg = cardRatingColors.ratingBg;
+
+    const cardDifficultyColors = getDifficultyColors(difficulty);
+    let difficultyColor = cardDifficultyColors.difficultyColor
     
     return `
         <div class="rmp-card-content">
@@ -99,42 +122,14 @@ export function createCompactCardTemplate(name, data) {
     const difficulty = data.avgDifficulty ? parseFloat(data.avgDifficulty) : null;
     const professorId = data.legacyId || null;
 
+    const cardRatingColors = getRatingColors(rating);
+    const cardDifficultyColors = getDifficultyColors(difficulty);
 
-    let ratingColor = '#6b7280';
-    let ratingBg = '#f3f4f6';
-    if (rating) {
-        if (rating >= 4.0) {
-            ratingColor = '#10b981';
-            ratingBg = '#d1fae5';
-        } else if (rating >= 3.0) {
-            ratingColor = '#f59e0b';
-            ratingBg = '#fef3c7';
-        } else if (rating >= 2.0) {
-            ratingColor = '#f97316';
-            ratingBg = '#fed7aa';
-        } else {
-            ratingColor = '#ef4444';
-            ratingBg = '#fecaca';
-        }
-    }
+    let ratingColor = cardRatingColors.ratingColor;
+    let ratingBg = cardRatingColors.ratingBg;
 
-    let difficultyColor = '#6b7280';
-    let difficultyBg = '#f3f4f6';
-    if (difficulty) {
-        if (difficulty >= 4.0) {
-            difficultyColor = '#ef4444';
-            difficultyBg = '#fecaca';
-        } else if (difficulty >= 3.0) {
-            difficultyColor = '#f97316';
-            difficultyBg = '#fed7aa';
-        } else if (difficulty >= 2.0) {
-            difficultyColor = '#f59e0b';
-            difficultyBg = '#fef3c7';
-        } else {
-            difficultyColor = '#10b981';
-            difficultyBg = '#d1fae5';
-        }
-    }
+    let difficultyColor = cardDifficultyColors.difficultyColor;
+    let difficultyBg = cardDifficultyColors.difficultyBg;
 
     return `
         <div class="rmp-compact-card-content">
