@@ -158,6 +158,34 @@
   line-height: 1.3;
 }
 
+.rmp-compact-not-found-message {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 1px solid #fbbf24;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #92400e;
+  text-decoration: none;
+  transition: all 150ms ease;
+  box-shadow: 0 1px 2px rgba(251, 191, 36, 0.15);
+}
+
+.rmp-compact-not-found-message:hover {
+  background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(251, 191, 36, 0.25);
+}
+
+.rmp-compact-not-found-message::before {
+  content: "⚠";
+  font-size: 13px;
+  line-height: 1;
+}
+
 /* Compact Card Styles */
 
 .rmp-compact-card {
@@ -186,4 +214,9 @@
   font-weight: 600;
   color: #1f2937;
   margin-right: 6px;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

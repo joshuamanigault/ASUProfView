@@ -61,7 +61,7 @@ function bindCheckbox(key: keyof Options) {
     el.addEventListener("click", async () => {
         const next = !el.classList.contains("checked");
         setCheckboxDom(id, next);
-        await saveOptions({ [key]: next });
+        await saveOptions({ [key]: next } as Partial<Options>);
     });
 
     el.addEventListener("keydown", async (e) => {

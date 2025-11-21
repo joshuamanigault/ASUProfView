@@ -149,14 +149,14 @@ function createNotFoundCard(name) {
 
 function createCompactCard(name, data) {
     const card = document.createElement('div');
-    card.className = 'rmp-card rmp-compact';
+    card.className = 'rmp-card rmp-compact-card';
     card.innerHTML = createCompactCardTemplate(name, data);
     return card;
 }
 
 function createCompactNotFoundCard(name) {
     const card = document.createElement('div');
-    card.className = 'rmp-card rmp-compact';
+    card.className = 'rmp-card rmp-compact-card';
     card.innerHTML = createCompactNotFoundCardTemplate(name);
     return card;
 }
@@ -196,5 +196,6 @@ if (document.readyState === 'loading') {
 }
     
 // Observe dynamically added elements with debouncing
-const observer = new MutationObserver(debounce(findProfessors, 250));
+const MUTATION_DEBOUNCE_MS = 250; 
+const observer = new MutationObserver(debounce(findProfessors, MUTATION_DEBOUNCE_MS));
 observer.observe(document.body, { childList: true, subtree: true });

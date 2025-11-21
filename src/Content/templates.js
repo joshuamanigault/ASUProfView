@@ -50,12 +50,8 @@ export function createProfessorCardTemplate(name, data) {
     const department = data.department || 'Unknown Department';
     const professorId = data.legacyId || null;
     
-    const cardRatingColors = getRatingColors(rating);
-    let ratingColor = cardRatingColors.ratingColor;
-    let ratingBg = cardRatingColors.ratingBg;
-
-    const cardDifficultyColors = getDifficultyColors(difficulty);
-    let difficultyColor = cardDifficultyColors.difficultyColor
+    const { ratingColor, ratingBg } = getRatingColors(rating);
+    const { difficultyColor } = getDifficultyColors(difficulty);
     
     return `
         <div class="rmp-card-content">
@@ -122,14 +118,9 @@ export function createCompactCardTemplate(name, data) {
     const difficulty = data.avgDifficulty ? parseFloat(data.avgDifficulty) : null;
     const professorId = data.legacyId || null;
 
-    const cardRatingColors = getRatingColors(rating);
-    const cardDifficultyColors = getDifficultyColors(difficulty);
 
-    let ratingColor = cardRatingColors.ratingColor;
-    let ratingBg = cardRatingColors.ratingBg;
-
-    let difficultyColor = cardDifficultyColors.difficultyColor;
-    let difficultyBg = cardDifficultyColors.difficultyBg;
+    const { ratingColor, ratingBg } = getRatingColors(rating);
+    const { difficultyColor, difficultyBg } = getDifficultyColors(difficulty);
 
     return `
         <div class="rmp-compact-card-content">
@@ -138,13 +129,13 @@ export function createCompactCardTemplate(name, data) {
                         ? `<a href="https://www.ratemyprofessors.com/professor/${professorId}" target="_blank" rel="noopener noreferrer">${name}</a>`
                         : `${name}`
             }</div>
-            <div class="rmp-compact-stat">
+            <div>
                 <div class="rmp-rating-badge" style="background-color: ${ratingBg}; color: ${ratingColor};">
                     ${rating ? rating.toFixed(1) : 'N/A'}
                 </div>
                 <span class="rmp-stat-label">Rating</span>
             </div>
-            <div class="rmp-compact-stat">
+            <div>
                 <div class="rmp-rating-badge" style="background-color: ${difficultyBg}; color: ${difficultyColor};">
                     ${difficulty ? difficulty.toFixed(1) : 'N/A'}
                 </div>
@@ -161,9 +152,9 @@ export function createCompactNotFoundCardTemplate(name) {
     return `
         <div class="rmp-compact-card-content">
             <div class="rmp-compact-name">${name}</div>
-            <div class="rmp-compact-not-found-message">
-                <a href="${searchUrl}" target="_blank" rel="noopener noreferrer">No data found, search on RMP</a>
-            </div>
+            <a href="${searchUrl}" target="_blank" rel="noopener noreferrer" class="rmp-compact-not-found-message">
+                No data · Search RMP
+            </a>
         </div>
     `;
 }
