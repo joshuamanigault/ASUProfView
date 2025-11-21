@@ -28,8 +28,10 @@ function setCheckboxDom(id: string, checked: boolean) {
     if (!el) return;
     if (checked) {
         el.classList.add("checked");
+        el.setAttribute("aria-checked", "true");
     } else {
         el.classList.remove("checked");
+        el.setAttribute("aria-checked", "false");
     }
 }
 
@@ -60,6 +62,13 @@ function bindCheckbox(key: keyof Options) {
         const next = !el.classList.contains("checked");
         setCheckboxDom(id, next);
         await saveOptions({ [key]: next });
+    });
+
+    el.addEventListener("keydown", async (e) => {
+        if (e.key === " " || e.key === "Enter") {
+            e.preventDefault();
+            el.click();
+        }
     });
 }
 
