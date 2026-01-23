@@ -25,6 +25,40 @@ const ASU_PROFESSOR_NAME_REPLACEMENTS: { [key: string]: string} = {
   "Zahra Sadri Moshkenani": "Zahra Sadri-Moshekenani"
 }
 
+async function getTagFrequency(professorName: string): Promise<Map<string, number> | null> {
+  try {
+    const rmp_instance = new RateMyProfessor("Arizona State University", professorName);
+    const result = await rmp_instance.get_comments_by_professor();
+
+    if (!result || result.length === 0) {
+      console.log("No comments found for the professor.");
+      return null;
+    }
+
+    const parsedTags: string[] = []
+     for (const obj of result) {
+      if (!obj.rating_tags) {
+        continue;
+      }
+
+      const tags = obj.rating_tags.split('--').map(tag => tag.trim());
+      parsedTags.push(...tags);
+    }
+    
+    const tagFrequency = new Map<string, number>();
+    for (const tag of parsedTags) {
+      const count = tagFrequency.get(tag) || 0;
+      tagFrequency.set(tag, count + 1);
+    }
+    return tagFrequency;
+  }
+  catch (error) {
+    console.error("Error fetching comments:", error);
+    return null;
+  }
+}
+
+
 function applyNameReplacements(professorName: string): string {
   // Direct replacement
   if (ASU_PROFESSOR_NAME_REPLACEMENTS[professorName]) {
@@ -87,6 +121,7 @@ async function searchAsuCampuses(professorName: string) {
         
         if (validateProfessor(professorName, result, nameToSearch)) {
           console.debug(`Found match at ${campus}: ${result.firstName} ${result.lastName}`);
+          await getTagFrequency(nameToSearch);
           return result;
         } else {
           console.debug(`Name mismatch at ${campus}: expected "${nameToSearch}", got "${result.firstName} ${result.lastName}"`);
@@ -96,7 +131,7 @@ async function searchAsuCampuses(professorName: string) {
         const errorMsg = `${campus} (${nameToSearch}): ${error instanceof Error ? error.message : 'Unknown error'}`;
         errors.push(errorMsg);
         console.debug(`Error message: ${errorMsg}`);
-        continue; // Try next campus instead of throwing
+        continue; 
       }
     }
   }
