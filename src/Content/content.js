@@ -18,7 +18,6 @@ function findProfessors() {
         }
     });
 
-    // console.debug('Names length:', names.length);
     if (names.length > 0) {
         processProfessorSequentially(names);
     } 
@@ -68,7 +67,6 @@ async function processProfessorSequentially(names)  {
 }
 
 function injectProfessorCard(name, data) {
-    // Find all professor links with this name
     const instructorDivs = document.querySelectorAll('div.instructor.class-results-cell');
     
     instructorDivs.forEach((div) => {
