@@ -43,7 +43,7 @@ function getDifficultyColors(difficulty) {
 }
 
 
-export function createProfessorCardTemplate(name, data) {
+function createProfessorCardTemplate(name, data) {
     const rating = data.avgRating ? parseFloat(data.avgRating) : null;
     const numRatings = data.numRatings || 0;
     const difficulty = data.avgDifficulty ? parseFloat(data.avgDifficulty) : null;
@@ -86,7 +86,7 @@ export function createProfessorCardTemplate(name, data) {
     `;
 }
 
-export function createNotFoundCardTemplate(name) {
+function createNotFoundCardTemplate(name) {
     const normalizedName = (name || '').replace(/\s+/g, ' ').trim();
     const searchUrl = `https://www.ratemyprofessors.com/search/professors/15723?q=${encodeURIComponent(normalizedName)}`;
 
@@ -113,7 +113,7 @@ export function createNotFoundCardTemplate(name) {
     `;
 }
 
-export function createCompactCardTemplate(name, data) {
+function createCompactCardTemplate(name, data) {
     const rating = data.avgRating ? parseFloat(data.avgRating) : null;
     const difficulty = data.avgDifficulty ? parseFloat(data.avgDifficulty) : null;
     const professorId = data.legacyId || null;
@@ -145,7 +145,7 @@ export function createCompactCardTemplate(name, data) {
     `;
 }
 
-export function createCompactNotFoundCardTemplate(name) {
+function createCompactNotFoundCardTemplate(name) {
     const normalizedName = (name || '').replace(/\s+/g, ' ').trim();
     const searchUrl = `https://www.ratemyprofessors.com/search/professors/15723?q=${encodeURIComponent(normalizedName)}`;
 
@@ -157,4 +157,32 @@ export function createCompactNotFoundCardTemplate(name) {
             </a>
         </div>
     `;
+}
+
+export function createProfessorCard(name, data) {
+    const card = document.createElement('div');
+    card.className = 'rmp-card';
+    card.innerHTML = createProfessorCardTemplate(name, data);
+    return card;
+}
+
+export function createNotFoundCard(name) {
+    const card = document.createElement('div');
+    card.className = 'rmp-card rmp-not-found';
+    card.innerHTML = createNotFoundCardTemplate(name);
+    return card;
+}
+
+export function createCompactCard(name, data) {
+    const card = document.createElement('div');
+    card.className = 'rmp-card rmp-compact-card';
+    card.innerHTML = createCompactCardTemplate(name, data);
+    return card;
+}
+
+export function createCompactNotFoundCard(name) {
+    const card = document.createElement('div');
+    card.className = 'rmp-card rmp-compact-card';
+    card.innerHTML = createCompactNotFoundCardTemplate(name);
+    return card;
 }
